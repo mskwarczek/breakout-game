@@ -1,111 +1,148 @@
-// Global general variables
+'use strict';
+
+// === GAME ENVIRONMENT === //
+
+// Global variables
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 
-// Global game variables
-let fieldSizeX = canvas.width;
-let fieldSizeY = canvas.height;
+const field = {
+    size: {
+        x: canvas.width,
+        y: canvas.height
+    },
+    fillStyle: '#ccc'
+}
 
-let ballSize = 10;
-let paddleWidth = 80;
-let paddleHeight = 10;
+// Game objects prototypes
+class Paddle {
+    constructor() {
+        this.size = {
+            x: 80,
+            y: 10
+        };
+        this.position = {
+            x: (field.size.x - this.size.x) / 2,
+            y: field.size.y - this.size.y
+        };
+        this.speed = {
+            dx: 8
+        };
+        this.move = {
+            right: false,
+            left: false
+        };
+    };
+    movePaddle() {
+        if (this.move.right && (this.position.x + this.size.x) < field.size.x) {
+            this.position.x += this.speed.dx;
+        }
+        else if (this.move.left && this.position.x > 0) {
+            this.position.x -= this.speed.dx;
+        };
+    };
+};
 
-let ballX = fieldSizeX / 2;
-let ballY = fieldSizeY - 50;
-let ballDeltaX = 2;
-let ballDeltaY = -2;
+class Ball {
+    constructor() {
+        this.size = 10;
+        this.position = {
+            x: field.size.x / 2,
+            y: field.size.y - 50
+        };
+        this.speed = {
+            dx: 4,
+            dy: -4
+        };
+    };
+    moveBall() {
+        this.position.x += this.speed.dx;
+        this.position.y += this.speed.dy;
+    }
+};
 
-let paddleX = (fieldSizeX - paddleWidth) / 2;
-let paddleY = fieldSizeY - paddleHeight;
-let paddleDeltaX = 8;
+// Create game objects
+let paddle = new Paddle();
+let ball = new Ball();
 
-let movePaddleRight = false;
-let movePaddleLeft = false;
-
-// Event listeners
-document.addEventListener('keydown', keyDownHandler, false);
-document.addEventListener('keyup', keyUpHandler, false);
-
-// Draw the game field
+// Draw  field and objects
 function drawField() {
     ctx.beginPath()
-    ctx.rect(0, 0, fieldSizeX, fieldSizeY);
-    ctx.fillStyle = '#ccc';
+    ctx.rect(0, 0, field.size.x, field.size.y);
+    ctx.fillStyle = field.fillStyle;
     ctx.fill();
     ctx.closePath();
 };
 
-// Draw the paddle
 function drawPaddle() {
     ctx.beginPath();
-    ctx.rect(paddleX, paddleY, paddleWidth, paddleHeight);
+    ctx.rect(paddle.position.x, paddle.position.y, paddle.size.x, paddle.size.y);
     ctx.fillStyle = '#000';
     ctx.fill();
     ctx.closePath();
 };
 
-// Draw the ball
 function drawBall() {
     ctx.beginPath();
-    ctx.arc(ballX, ballY, ballSize, 0, Math.PI * 2)
+    ctx.arc(ball.position.x, ball.position.y, ball.size, 0, Math.PI * 2)
     ctx.fillStyle = '#000';
-    ctx.fill()
+    ctx.fill();
     ctx.closePath();
 };
+
+// Add event listeners on player's actions
+document.addEventListener('keydown', keyDownHandler, false);
+document.addEventListener('keyup', keyUpHandler, false);
 
 // Player action handlers (move left, move right)
 function keyDownHandler(event) {
     if (event.key == 'ArrowRight' || event.key == 'Right') {
-        movePaddleRight = true;
+        paddle.move.right = true;
     }
-    else if (event.key == 'ArrowLeft' || event.key == 'Left')  {
-        movePaddleLeft = true;
+    else if (event.key == 'ArrowLeft' || event.key == 'Left') {
+        paddle.move.left = true;
     }
 }
 
 function keyUpHandler(event) {
     if (event.key == 'ArrowRight' || event.key == 'Right') {
-        movePaddleRight = false;
+        paddle.move.right = false;
     }
-    else if (event.key == 'ArrowLeft' || event.key == 'Left')  {
-        movePaddleLeft = false;
+    else if (event.key == 'ArrowLeft' || event.key == 'Left') {
+        paddle.move.left = false;
     }
+}
+
+// Collisions handler
+function collisionHandler() {
+    if (ball.position.x + ball.speed.dx > field.size.x - ball.size || ball.position.x + ball.speed.dx < ball.size) {
+        ball.speed.dx = -ball.speed.dx;
+    };
+    if (ball.position.y + ball.speed.dy < ball.size || (
+        ball.position.y + ball.speed.dy > field.size.y - paddle.size.y - ball.size &&
+        ball.position.x + ball.speed.dx > paddle.position.x &&
+        ball.position.x + ball.speed.dx < paddle.position.x + paddle.size.x)
+    ) {
+        ball.speed.dy = -ball.speed.dy;
+    }
+    else if (ball.position.y + ball.speed.dy > field.size.y) {
+        location.reload();
+    };
 }
 
 // Game Loop
 function gameLoop() {
 
-// Drawing
+    // Drawing
     drawField();
     drawPaddle();
     drawBall();
 
-// Paddle movement
-    if (movePaddleRight && (paddleX + paddleWidth) < fieldSizeX) {
-        paddleX += paddleDeltaX;
-    }
-    else if (movePaddleLeft && paddleX > 0) {
-        paddleX -= paddleDeltaX;
-    }
-
-// Bouncing from field walls and the paddle / game restart
-    if (ballX + ballDeltaX > fieldSizeX - ballSize || ballX + ballDeltaX < ballSize) {
-        ballDeltaX = -ballDeltaX;
-    }
-    if (ballY + ballDeltaY < ballSize || (
-            ballY + ballDeltaY > fieldSizeY - paddleHeight - ballSize &&
-            ballX + ballDeltaX > paddleX &&
-            ballX + ballDeltaX < paddleX + paddleWidth)
-        ) {
-           ballDeltaY = -ballDeltaY;
-    }
-    else if (ballY + ballDeltaY > fieldSizeY) {
-        location.reload();
-    }
-
-// Ball movement
-    ballX += ballDeltaX;
-    ballY += ballDeltaY;
+    // Objects movement and collision detection
+    collisionHandler()
+    
+    paddle.movePaddle();
+    ball.moveBall();
 
     requestAnimationFrame(gameLoop);
 };
