@@ -7,7 +7,8 @@ export default class Line {
         this.padding = Math.floor((Math.random() * 3 ) + 1) * 5;
         this.brickData = {
             width: Math.floor((Math.random() * 4 ) + 2) * 20,
-            height: brickHeight
+            height: brickHeight,
+            type: Math.floor((Math.random() * 10 ) + 1)
         };
         this.brickCount = Math.floor(FIELD_X / (this.brickData.width + this.padding));
         this.sideMargin = (FIELD_X - (this.brickCount * (this.brickData.width + this.padding) - this.padding)) / 2;
@@ -18,7 +19,7 @@ export default class Line {
     };
     generate() {
         for (let i = 0; i < this.brickCount; i++) {
-            this.bricks.push(new Brick(this.sideMargin + (this.brickData.width + this.padding) * i, this.positionY, this.brickData.width, this.brickData.height));
+            this.bricks.push(new Brick(this.sideMargin + (this.brickData.width + this.padding) * i, this.positionY, this.brickData.width, this.brickData.height, this.brickData.type));
         };
     };
     calculateStrength() {

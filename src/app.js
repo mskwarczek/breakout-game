@@ -61,69 +61,72 @@ function applyBonus(type) {
         case 1:
             state.balls.forEach(ball => {
                 ball.speed.dx = ball.speed.dx > 0
-                    ? state.levelBallSpeed + 3
-                    : -state.levelBallSpeed - 3;
+                    ? state.levelBallSpeed + 2
+                    : -state.levelBallSpeed - 2;
                 ball.speed.dy = ball.speed.dy > 0
-                    ? state.levelBallSpeed + 3
-                    : -state.levelBallSpeed - 3;
+                    ? state.levelBallSpeed + 2
+                    : -state.levelBallSpeed - 2;
                 ball.fillStyle = "aqua";
             });
             state.alertText = 'Fast balls!';
-            state.alertColor = 'red';
+            state.alertColor = PALETTE.negativeAlertFillStyle;
             break;
         case 2:
             state.paddle.size.x = CONFIG.basePaddleWidth / 2;
             state.alertText = 'Tiny paddle!';
-            state.alertColor = 'red';
+            state.alertColor = PALETTE.negativeAlertFillStyle;
             break;
         case 3:
             state.balls.forEach(ball => ball.power = CONFIG.baseBallPower / 2);
             state.alertText = 'Weak balls!';
-            state.alertColor = 'red';
+            state.alertColor = PALETTE.negativeAlertFillStyle;
             break;
         case 4:
             state.balls.forEach(ball => ball.size = CONFIG.baseBallSize / 2);
             state.alertText = 'Small balls!';
-            state.alertColor = 'red';
+            state.alertColor = PALETTE.negativeAlertFillStyle;
             break;
         case 5:
             state.balls.forEach(ball => ball.size = CONFIG.baseBallSize * 2);
             state.alertText = 'Big balls!';
-            state.alertColor = 'green';
+            state.alertColor = PALETTE.positiveAlertFillStyle;
             break;
         case 6:
             state.paddle.size.x = CONFIG.basePaddleWidth * 1.5;
             state.alertText = 'Big paddle!';
-            state.alertColor = 'green';
+            state.alertColor = PALETTE.positiveAlertFillStyle;
             break;
         case 7:
             state.balls.forEach(ball => {
                 ball.speed.dx = ball.speed.dx > 0
-                    ? state.levelBallSpeed - 2
-                    : -state.levelBallSpeed + 2;
+                    ? state.levelBallSpeed - 1.5
+                    : -state.levelBallSpeed + 1.5;
                 ball.speed.dy = ball.speed.dy > 0
-                    ? state.levelBallSpeed - 2
-                    : -state.levelBallSpeed + 2;
+                    ? state.levelBallSpeed - 1.5
+                    : -state.levelBallSpeed + 1.5;
                 ball.fillStyle = "darkblue";
             });
             state.alertText = 'Slow balls!';
-            state.alertColor = 'green';
+            state.alertColor = PALETTE.positiveAlertFillStyle;
             break;
         case 8:
-            state.balls.forEach(ball => ball.power = CONFIG.baseBallPower * 10);
+            state.balls.forEach(ball => {
+                ball.power = CONFIG.baseBallPower * 10;
+                ball.fillStyle = "red";
+            });
             state.alertText = 'Powerfull balls!';
-            state.alertColor = 'green';
+            state.alertColor = PALETTE.positiveAlertFillStyle;
             break;
         case 9:
             state.balls.push(new Ball(CONFIG.baseBallSize, state.levelBallSpeed, CONFIG.baseBallPower, PALETTE.baseBallFillStyle, state.balls[0].position.x));
             state.balls.push(new Ball(CONFIG.baseBallSize, state.levelBallSpeed, CONFIG.baseBallPower, PALETTE.baseBallFillStyle, state.paddle.position.x));
             state.alertText = 'Multiple balls!';
-            state.alertColor = 'green';
+            state.alertColor = PALETTE.positiveAlertFillStyle;
             break;
         case 10: {
             state.multiplier = state.levelMultiplier * 10;
             state.alertText = 'Multiplier x 10!';
-            state.alertColor = 'orange';
+            state.alertColor = PALETTE.positiveAlertFillStyle;
             break;
         }
         default: console.error('Unknown bonus type in function applyBonus');

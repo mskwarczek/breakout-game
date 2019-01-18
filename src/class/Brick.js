@@ -1,7 +1,7 @@
-import { CTX }  from '../Global';
+import { CTX, PALETTE }  from '../Global';
 
 export default class Brick {
-    constructor(positionX, positionY, width, height) {
+    constructor(positionX, positionY, width, height, type) {
         this.shape = 'rectangle';
         this._strength = 10;
         this.value = 10;
@@ -12,6 +12,25 @@ export default class Brick {
         this.size = {
             x: width,
             y: height
+        };
+        this.type = type;
+        this.fillStyle = PALETTE.baseBrickFillStyle;
+        this.setParameters();
+    };
+    setParameters() {
+        if (this.type > 8 ) {
+            switch(this.type) {
+                case 9:
+                    this.strength = 50;
+                    this.value = 20;
+                    this.fillStyle = PALETTE.strongBrickFillStyle;
+                    break;
+                case 10:
+                    this.value = 100;
+                    this.fillStyle = PALETTE.valuableBrickFillStyle;
+                    break;
+                default: break;
+            };
         };
     };
     get strength() {
@@ -26,7 +45,7 @@ export default class Brick {
         if (this.strength > 0) {
             CTX.beginPath();
             CTX.rect(this.position.x, this.position.y, this.size.x, this.size.y);
-            CTX.fillStyle = 'blue';
+            CTX.fillStyle = this.fillStyle;
             CTX.fill();
             CTX.closePath();
         };
