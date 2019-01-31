@@ -1,6 +1,6 @@
 {
     "name": "breakout-game",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "private": false,
     "dependencies": {
         "@babel/core": "^7.2.2",
@@ -14,5 +14,7 @@
     "scripts": {
         "start": "webpack -d --watch",
         "build": "webpack"
-    }
+    },
+    "author": "Maciej Skwarczek",
+    "license": "ISC"
 }

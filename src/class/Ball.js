@@ -5,7 +5,7 @@ export default class Ball {
         this.shape = 'circle';
         this.position = {
             x: positionX || FIELD_X / 2,
-            y: FIELD_Y - 50
+            y: FIELD_Y - 20
         };
         this.size = size;
         this.speed = {
