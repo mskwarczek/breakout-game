@@ -19,6 +19,7 @@ let state = {
     levelMultiplier: CONFIG.baseMultiplier,
     alertText: '',
     alertColor: PALETTE.baseAlertFillStyle,
+    pause: true,
     draw() {
         CTX.font = '16px Arial';
         CTX.fillStyle = PALETTE.baseTextFillStyle;
@@ -30,11 +31,11 @@ let state = {
         CTX.fillText(state.alertText, (FIELD_X / 2) - 40, 20)
     },
 };
-console.log(state);
 
 function addListeners() {
     document.addEventListener('keydown', keyDownHandler, false);
     document.addEventListener('keyup', keyUpHandler, false);
+    document.querySelector('#restart').addEventListener('click', () => { location.reload() }, false);
 };
 addListeners();
 
@@ -44,6 +45,16 @@ function keyDownHandler(event) {
     }
     else if (event.key == 'ArrowLeft' || event.key == 'Left') {
         state.paddle.isMoving.left = true;
+    }
+    else if (event.code == 'Space') {
+        if (state.pause === true) {
+            state.pause = false;
+            play();
+        }
+        else {
+            state.pause = true;
+            pause();
+        };
     };
 };
 
@@ -133,7 +144,25 @@ function applyBonus(type) {
     };
 };
 
+function gameover(level, score) {
+    document.addEventListener('keydown', () => { if (event.code == 'Space') location.reload() }, false);
+    const info = document.querySelector('#info');
+    let text = document.createTextNode(`You made it to level ${level} with a score of ${score}!`);
+    info.appendChild(text);
+};
+
+function pause() {
+    CTX.clearRect(0, 0, FIELD_X, FIELD_Y);
+    state.field.draw();
+    state.draw();
+    state.wall.draw();
+    state.paddle.draw();
+    state.balls.forEach(ball => ball.draw());
+    state.bonus.forEach(bonus => bonus.draw());
+};
+
 function play() {
+
     CTX.clearRect(0, 0, FIELD_X, FIELD_Y);
 
     state.field.draw();
@@ -187,7 +216,8 @@ function play() {
         state.multiplier = state.levelMultiplier;
         state.alertText = 'Next level!';
         state.alertColor = PALETTE.baseAlertFillStyle;
-        console.log(state);
+        state.pause;
+        pause();
     };
 
     if (state.balls.length === 0) {
@@ -197,14 +227,15 @@ function play() {
         state.lives -= 1;
         state.alertText = 'Ball lost.';
         state.alertColor = PALETTE.baseAlertFillStyle;
-        if (state.lives === 0) {
-            alert('GAME OVER');
-            console.log(state);
-            location.reload();
-        };
+        state.pause = true;
+        pause();
+        if (state.lives === 0) gameover(state.level, state.score);
     };
 
-    requestAnimationFrame(play);
+    // Hack for test purposes
+    //state.paddle.position.x = state.balls[0].position.x - (state.paddle.size.x / 2);
+
+    if (state.pause !== true) requestAnimationFrame(play);
 };
 
-play();
+pause();
