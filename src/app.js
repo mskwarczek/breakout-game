@@ -46,7 +46,7 @@ function keyDownHandler(event) {
     else if (event.key == 'ArrowLeft' || event.key == 'Left') {
         state.paddle.isMoving.left = true;
     }
-    else if (event.code == 'Space') {
+    else if (event.key == ' ' || event.code == 'Space') {
         if (state.pause === true) {
             state.pause = false;
             play();
